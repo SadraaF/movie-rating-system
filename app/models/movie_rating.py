@@ -1,23 +1,23 @@
-from typing import TYPE_CHECKING, List
+from datetime import datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import String
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
 if TYPE_CHECKING:
-    from .movie import Movie  # Avoid circular import
+    from .movie import Movie
 
 
-class Genre(Base):
-    """SQLAlchemy model for genres."""
-    __tablename__ = "genres"
+class MovieRating(Base):
+    """SQLAlchemy model for movie ratings."""
+    __tablename__ = "movie_ratings"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String(128), unique=True, index=True)
-    description: Mapped[str | None] = mapped_column(String(512))
+    id: Mapped[int] = mapped_column(primary_key=True)
+    movie_id: Mapped[int] = mapped_column(ForeignKey("movies.id"))
+    score: Mapped[int]
+    rated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
-    # Relationship to Movie (Many-to-Many)
-    movies: Mapped[List["Movie"]] = relationship(
-        secondary="movie_genres", back_populates="genres"
-    )
+    # Relationship to Movie (Many-to-One)
+    movie: Mapped["Movie"] = relationship(back_populates="ratings")
