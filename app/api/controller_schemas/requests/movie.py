@@ -17,4 +17,4 @@ class MovieUpdateRequest(BaseModel):
 
 class RatingCreateRequest(BaseModel):
     """Schema for registering a rating."""
-    score: int = Field(..., ge=1, le=10)
+    score: int = Field(...)

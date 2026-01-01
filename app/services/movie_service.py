@@ -1,10 +1,15 @@
+import logging
 from typing import Any
+
+from app.core.decorators import log_execution_time
 from app.repositories.movie_repository import MovieRepository
 from app.repositories.director_repository import DirectorRepository
 from app.repositories.genre_repository import GenreRepository
 from app.exceptions.repository_exceptions import EntityNotFoundError
 from app.exceptions.service_exceptions import ValidationError
 from app.models.movie import Movie
+
+logger = logging.getLogger("app.movie_service")
 
 class MovieService:
     """Service layer for Movie-related business logic."""
@@ -25,6 +30,7 @@ class MovieService:
         self._director_repo = director_repo
         self._genre_repo = genre_repo
 
+    @log_execution_time
     async def list_movies(
         self, 
         page: int, 
@@ -36,6 +42,8 @@ class MovieService:
         """
         Orchestrate the retrieval of a paginated movie list.
         """
+        logger.info(f"Fetching movie list: page={page}, size={page_size}, filters={{'title': {title}, 'year': {year}, 'genre': {genre}}}")
+
         skip = (page - 1) * page_size
         movies, total = await self._movie_repo.get_all_paginated(
             skip, page_size, title, year, genre
