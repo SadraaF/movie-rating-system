@@ -98,3 +98,20 @@ class MovieRepository:
         """
         await self._session.delete(movie)
         await self._session.commit()
+
+    async def create(self, movie: Movie) -> Movie:
+        """
+        Save a new movie to the database.
+        :param movie: The movie instance to save.
+        :return: The saved movie instance with its ID populated.
+        """
+        self._session.add(movie)
+        await self._session.commit()
+        await self._session.refresh(movie)
+        return movie
+
+    async def update(self) -> None:
+        """
+        Commit the current session changes to update a movie.
+        """
+        await self._session.commit()
