@@ -14,3 +14,6 @@ __pycache__/
 .vscode/
 
 scripts/*.csv
+
+logs/
+*.log
