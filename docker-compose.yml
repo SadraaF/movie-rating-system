@@ -12,7 +12,24 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U movieuser -d moviedb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: movie_rating_app
+    # Override DATABASE_URL to point to the 'db' service instead of 'localhost'
+    environment:
+      - DATABASE_URL=postgresql+psycopg://movieuser:supersecretpassword@db:5432/moviedb
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
 
 volumes:
   postgres_data:
