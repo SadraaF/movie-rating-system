@@ -34,10 +34,18 @@ class MovieRepository:
         :param genre_name: Exact genre name filter.
         :return: A tuple containing (list of movies, total count).
         """
-        # Build the base query
-        query = select(Movie).options(
-            selectinload(Movie.director),
-            selectinload(Movie.genres)
+        # Base query joining Movie with Ratings
+        query = (
+            select(
+                Movie,
+                func.coalesce(func.avg(MovieRating.score), 0.0).label("average_rating"),
+                func.count(MovieRating.id).label("ratings_count")
+            )
+            .outerjoin(MovieRating, Movie.id == MovieRating.movie_id)
+            .options(
+                selectinload(Movie.director),
+                selectinload(Movie.genres)
+            )
         )
 
         # Apply filters
@@ -52,15 +60,23 @@ class MovieRepository:
         if filters:
             query = query.where(and_(*filters))
 
-        # Get total count before pagination
-        count_query = select(func.count()).select_from(query.subquery())
+        # Grouping
+        query = query.group_by(Movie.id)
+
+        # Total Count
+        count_query = select(func.count(Movie.id))
+        if genre_name:
+             count_query = count_query.join(Movie.genres).where(Genre.name == genre_name)
+        if filters:
+            count_query = count_query.where(and_(*filters))
+            
         total_count = (await self._session.execute(count_query)).scalar_one()
 
-        # Apply pagination and ordering
+        # Pagination & Order
         query = query.offset(skip).limit(limit).order_by(Movie.id.desc())
         
         result = await self._session.execute(query)
-        return result.scalars().all(), total_count
+        return result.all(), total_count
 
     async def get_by_id(self, movie_id: int) -> Movie | None:
         """

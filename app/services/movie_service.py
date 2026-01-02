@@ -45,20 +45,24 @@ class MovieService:
         logger.info(f"Fetching movie list: page={page}, size={page_size}, filters={{'title': {title}, 'year': {year}, 'genre': {genre}}}")
 
         skip = (page - 1) * page_size
-        movies, total = await self._movie_repo.get_all_paginated(
+        results, total = await self._movie_repo.get_all_paginated(
             skip, page_size, title, year, genre
         )
 
         items = []
-        for m in movies:
-            avg, count = await self._movie_repo.get_avg_rating(m.id)
+        for row in results:
+            movie, avg_rating, count = row
+            
+            final_avg = round(float(avg_rating), 1) if avg_rating else None
+
             items.append({
-                "id": m.id,
-                "title": m.title,
-                "release_year": m.release_year,
-                "director": {"id": m.director.id, "name": m.director.name},
-                "genres": [g.name for g in m.genres],
-                "average_rating": avg
+                "id": movie.id,
+                "title": movie.title,
+                "release_year": movie.release_year,
+                "director": {"id": movie.director.id, "name": movie.director.name},
+                "genres": [g.name for g in movie.genres],
+                "average_rating": final_avg,
+                "ratings_count": count
             })
 
         return {
