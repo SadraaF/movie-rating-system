@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import TYPE_CHECKING, List
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Table
+from sqlalchemy import Column, ForeignKey, Integer, String, Table, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -29,6 +30,9 @@ class Movie(Base):
     release_year: Mapped[int]
     cast: Mapped[str | None] = mapped_column(String(512))
     description: Mapped[str | None]
+
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    updated_at: Mapped[datetime | None] = mapped_column(onupdate=func.now())
 
     # Foreign Key to directors table
     director_id: Mapped[int] = mapped_column(ForeignKey("directors.id"))
