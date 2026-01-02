@@ -1,3 +1,8 @@
+"""
+Configuration module for application-wide logging.
+Sets up console and rotating file handlers.
+"""
+
 import logging.config
 import sys
 from pathlib import Path

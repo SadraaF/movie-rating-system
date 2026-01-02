@@ -1,3 +1,8 @@
+"""
+Core decorators for cross-cutting concerns like performance monitoring.
+Used to implement observability across service layers.
+"""
+
 import time
 import logging
 import functools
