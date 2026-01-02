@@ -15,6 +15,7 @@ class MovieBrief(BaseModel):
     director: DirectorMinimal
     genres: list[str]
     average_rating: float | None
+    ratings_count: int = 0
 
 class MoviePaginatedResponse(BaseModel):
     page: int
@@ -25,7 +26,6 @@ class MoviePaginatedResponse(BaseModel):
 class MovieDetailResponse(MovieBrief):
     director: DirectorDetailed
     cast: str | None
-    ratings_count: int
 
 class RatingResponse(BaseModel):
     rating_id: int
