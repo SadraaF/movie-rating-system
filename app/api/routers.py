@@ -1,3 +1,5 @@
+"""Main API router configuration that aggregates all sub-routers (v1)."""
+
 from fastapi import APIRouter
 from app.api.controllers import movie_controller
 

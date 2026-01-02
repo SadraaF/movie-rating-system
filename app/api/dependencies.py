@@ -1,3 +1,8 @@
+"""
+FastAPI dependencies for database sessions and service injection.
+Handles the lifecycle of SQLAlchemy async sessions.
+"""
+
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
