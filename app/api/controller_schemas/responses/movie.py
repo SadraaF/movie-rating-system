@@ -7,6 +7,8 @@ class DirectorMinimal(BaseModel):
 class DirectorDetailed(DirectorMinimal):
     birth_year: int | None
     description: str | None
+    created_at: str
+    updated_at: str | None
 
 class MovieBrief(BaseModel):
     id: int
@@ -26,6 +28,8 @@ class MoviePaginatedResponse(BaseModel):
 class MovieDetailResponse(MovieBrief):
     director: DirectorDetailed
     cast: str | None
+    created_at: str
+    updated_at: str | None
 
 class RatingResponse(BaseModel):
     rating_id: int

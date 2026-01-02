@@ -91,12 +91,16 @@ class MovieService:
                 "id": movie.director.id,
                 "name": movie.director.name,
                 "birth_year": movie.director.birth_year,
-                "description": movie.director.description
+                "description": movie.director.description,
+                "created_at": movie.director.created_at.isoformat(),
+                "updated_at": movie.director.updated_at.isoformat() if movie.director.updated_at else None,
             },
             "genres": [g.name for g in movie.genres],
             "cast": movie.cast,
             "average_rating": avg,
             "ratings_count": count
+            "created_at": movie.created_at.isoformat(),
+            "updated_at": movie.updated_at.isoformat() if movie.updated_at else None,
         }
 
     async def add_movie(self, movie_data: dict[str, Any]) -> dict[str, Any]:
